@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const commentForm = document.getElementById('commentForm'); // Get the comment form element
-    const commentsSection = document.getElementById('comments-section'); // Get the comments section element (new)
+    const commentForm = document.getElementById('commentForm');
+    const commentsSection = document.getElementById('comments-section');
   
     commentForm.addEventListener('submit', function(event) {
-      event.preventDefault(); // Prevent default form submission
+      event.preventDefault();
   
-      const name = document.getElementById('name').value;
-      const comment = document.getElementById('comment').value;
+      const name = sanitizeInput(document.getElementById('name').value);
+      const comment = sanitizeInput(document.getElementById('comment').value);
   
       let comments;
       if(localStorage.getItem('comments')) {
@@ -15,38 +15,81 @@ document.addEventListener('DOMContentLoaded', function() {
         comments = [];
       }
   
-      // Add the new comment to the beginning of the array
       comments.push({ name, comment, date: new Date().toLocaleString() });
   
       localStorage.setItem('comments', JSON.stringify(comments));
   
       displayComments();
-      //clearing value for the name form
       document.getElementById('name').value = '';
-        //clearing value for the comment form
       document.getElementById('comment').value = '';
     });
   
     function displayComments() {
       const comments = JSON.parse(localStorage.getItem('comments')) || [];
   
-      commentsSection.innerHTML = '';  // Clear the comments section before adding new ones
+      commentsSection.innerHTML = '';
   
       comments.forEach(comment => {
         const commentHTML = `
           <section class="comment">
             <p>
               <img src="/avatar.png" class="avatar">
-              <span class="comment-author">${comment.name} | ${comment.date}</span>
+              <span class="comment-author">${escapeHTML(comment.name)} | ${comment.date}</span>
             </p>
-            <p>${comment.comment}</p>
+            <p>${escapeHTML(comment.comment)}</p>
             <p></p>
           </section>`;
-        commentsSection.insertAdjacentHTML('beforeend', commentHTML); // Append comments to the end (new)
+        commentsSection.insertAdjacentHTML('beforeend', commentHTML);
       });
     }
   
-    // Call displayComments() once to display any existing comments on page load
     displayComments();
   });
-  
+
+function sanitizeInput(input) {
+  // Implement your input sanitization logic here
+  // For simplicity, this example uses DOMPurify library
+  return DOMPurify.sanitize(input);
+}
+
+function escapeHTML(html) {
+  // Implement HTML escaping logic here
+  // For simplicity, this example uses a basic implementation
+  return html.replace(/[&<>"']/g, function(match) {
+    return {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[match];
+  });
+}
+
+function htmlEncode(str) {
+  // HTML encoding function
+  return String(str).replace(/[&<>"']/g, function(match) {
+    return {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[match];
+  });
+}
+
+function jsEscape(str) {
+  // Unicode encoding function
+  return String(str).replace(/[^\w. ]/gi, function(c) {
+    return '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4);
+  });
+}
+
+function validateInput(input) {
+  // Implement input validation logic here
+  // You can validate input length, format, etc.
+  // For example, checking if the input contains only alphanumeric characters
+  const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+  return alphanumericRegex.test(input);
+}

@@ -4,9 +4,10 @@
     <link href="style.css" rel="stylesheet">
     <link href="style1.css" rel="stylesheet">
     <title>Exploiting cross-site scripting to steal cookies</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
   </head>
   <body>
-    <script src="app.js"></script>
+    <script src="app.js" defer></script>
     <div id="academyLabHeader">
       </div>
     <div theme="blog">
@@ -19,7 +20,7 @@
           <div class="blog-post">
                     <img src="/img1.png">
                     <h1>Passwords</h1>
-                    <p><span id=blog-author>Zach Ache</span> | 08 April 2024</p>
+                    <p><span id="blog-author">Zach Ache</span> | 08 April 2024</p>
                     <hr>
                     <p>There are three types of password users in the world; those who remember them, those who don&apos;t, and those who write them down.</p>
                     <p>Those who don&apos;t remember them, but don&apos;t write them down tend to use the same passwords for every site they need to log in to. We are told this is not great for our online security, they break one and they have them all. I&apos;m not sure they&apos;d want to fraudulently purchase goods from the sites I&apos;m signed up to unless they can&apos;t afford to buy their own dog food or they want to know how to make a vegan mousse.</p>
